@@ -294,3 +294,68 @@ test('the plugin is listed under its new name', () => {
   assert.equal(zh.meta.title, '窗口拖动')
   assert.equal(en.meta.title, 'Window Drag')
 })
+
+test('registers a complete zh/en dictionary pair, so a language switch has both sides', () => {
+  const document = createDocument()
+  const { exports } = loadPlugin(document)
+  const registered = []
+  const bound = []
+  const subscribed = []
+  const locale = {
+    register: (ns, language, dict) => { registered.push({ ns, language, dict }); return () => {} },
+    bind: (ns) => { bound.push(ns); return (key) => key },
+    subscribe: () => { subscribed.push(true); return () => {} },
+  }
+  exports.apply(makeContext({ get: (key) => (key === 'locale' ? locale : undefined) }))
+
+  assert.deepEqual(registered.map((entry) => entry.language).sort(), ['en', 'zh'])
+  assert.deepEqual([...new Set(registered.map((entry) => entry.ns))], ['window-drag-probe'])
+  const zh = registered.find((entry) => entry.language === 'zh').dict
+  const en = registered.find((entry) => entry.language === 'en').dict
+  assert.deepEqual(Object.keys(zh).sort(), Object.keys(en).sort(), 'both dictionaries must carry the same keys')
+  assert.ok(Object.keys(zh).length >= 25, 'the dictionaries must cover the whole panel')
+  for (const dictionary of [zh, en]) {
+    for (const [key, value] of Object.entries(dictionary)) {
+      assert.equal(typeof value, 'string', `${key} must be a string`)
+      assert.notEqual(value.trim(), '', `${key} must not be empty`)
+    }
+  }
+  assert.deepEqual(bound, ['window-drag-probe'])
+  assert.equal(subscribed.length, 1, 'a locale switch must be able to relabel an open panel')
+})
+
+test('every panel caption goes through the shell translator, not the fallback', () => {
+  const document = createDocument()
+  const { exports } = loadPlugin(document)
+  const seen = []
+  const locale = {
+    register: () => () => {},
+    bind: () => (key) => { seen.push(key); return `T:${key}` },
+    subscribe: () => () => {},
+  }
+  exports.apply(makeContext({ get: (key) => (key === 'locale' ? locale : undefined) }))
+  globalThis.__dshWindowDragProbe.open()
+
+  for (const key of ['panelTitle', 'refresh', 'bandAdd', 'bandRemove', 'resetPosition', 'hidePanel']) {
+    assert.ok(seen.includes(key), `${key} must be read through t`)
+  }
+  const panel = document.getElementById('dsh-window-drag-probe-panel')
+  assert.notEqual(panel, null)
+  const body = panel.children[1]
+  for (const key of ['windowPosition', 'matrixTitle', 'sampleTitle', 'regionBoxes']) {
+    assert.match(body.textContent, new RegExp(`T:${key}`), `${key} must be read through t`)
+  }
+})
+
+test('falls back to Chinese when the shell has no locale service', () => {
+  const document = createDocument()
+  const { exports } = loadPlugin(document)
+  const locale = { bind: undefined }
+  exports.apply(makeContext({ get: (key) => (key === 'locale' ? locale : undefined) }))
+  globalThis.__dshWindowDragProbe.open()
+
+  const panel = document.getElementById('dsh-window-drag-probe-panel')
+  const body = panel.children[1]
+  assert.match(body.textContent, /窗口位置/u)
+  assert.notEqual(document.getElementById(BAND_ID), null)
+})

@@ -72,6 +72,8 @@ dsh plugin --profile <profile> add "$PWD/dsh-window-drag-probe"
 
 面板可用标题条拖动、用 `▾` 折叠、会记住位置，并报告：
 
+> 面板与按钮的文案跟随 DSH 的语言：中文界面显示中文，切到 English 即显示英文（面板开着也会即时重贴文案）。插件列表里的名字与描述同样跟随语言（`locale/zh.json` → 窗口拖动，`locale/en.json` → Window Drag）。
+
 | 行 | 含义 |
 | --- | --- |
 | `platform` | `data-platform` 标记。只有 `darwin` 下才存在 drag 规则。 |
