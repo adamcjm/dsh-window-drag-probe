@@ -1,0 +1,41 @@
+{
+  "name": "dsh-window-drag-probe",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "description": "窗口拖动诊断与拖拽带：在真实窗口里读回 computed app-region、recall 标记与窗口位移，定位 macOS 端窗口拖不动的问题（deepseek-harness discussion #9112）。",
+  "license": "MIT",
+  "icon": "./icon.svg",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "README.zh.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Window drag probe">
+  <!-- original artwork: a window whose title band is live, with a move handle -->
+  <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.5" y="6.5" width="19" height="13" rx="2.5" />
+    <path d="M2.5 10.5h19" />
+    <path d="M9.5 15.4h5" />
+    <path d="M11.3 13.9l-1.8 1.5 1.8 1.5" />
+    <path d="M12.7 13.9l1.8 1.5-1.8 1.5" />
+  </g>
+  <g fill="currentColor" stroke="none">
+    <circle cx="5.6" cy="8.5" r=".85" />
+    <circle cx="8.1" cy="8.5" r=".85" />
+  </g>
+</svg>

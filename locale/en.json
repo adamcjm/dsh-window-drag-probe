@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Window Drag Probe",
+    "description": "Arms a 16px drag band at the window top on load (the workaround for this machine's macOS drag failure), and offers a button on its plugin page that opens a panel reading computed app-region, the recall mark and window movement."
+  }
+}
