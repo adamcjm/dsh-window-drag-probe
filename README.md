@@ -68,7 +68,7 @@ After the host restarts, a faint blue band spans the **top 16 px** of the window
 
 ### Diagnostic panel
 
-Plugins → open **Window Drag Probe** → press **打开「窗口拖动诊断」面板** (the button this plugin registers on its own page).
+Plugins → open **Window Drag** → press **打开「窗口拖动」面板** (the button this plugin registers on its own page).
 
 The panel is draggable by its header, collapsible with `▾`, remembers its position, and reports:
 

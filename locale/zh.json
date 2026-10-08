@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "窗口拖动诊断",
-    "description": "加载即默认在窗口顶部装一条 16px 的可拖拽带（本机 macOS 拖不动窗口的临时解法），并从插件页提供按钮打开诊断面板：读回 computed app-region、recall 标记与窗口位移。"
+    "title": "窗口拖动",
+    "description": "加载即在窗口顶部自动装好一条可拖拽带（本机 macOS 拖不动窗口的解法），并从插件页提供按钮打开面板：读回 computed app-region、recall 标记与窗口位移。"
   }
 }
