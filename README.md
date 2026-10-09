@@ -68,9 +68,11 @@ After the host restarts, a faint blue band spans the **top 16 px** of the window
 
 ### Diagnostic panel
 
-Plugins → open **Window Drag** → press **Open the “Window Drag” panel** (the button this plugin registers on its own page).
+Plugins → open **Window Drag** → press **Open the “Window Drag” panel** (the button this plugin registers on its own page, and only on that page).
 
 The panel is draggable by its header, collapsible with `▾`, remembers its position, and reports:
+
+> There is only ever one panel: pressing the opener again reuses the open one and flashes its outline, and any duplicates left by an older revision are collapsed on the next open.
 
 > Panel copy follows the DSH language: a Chinese UI shows Chinese, an English UI shows English (an open panel is relabelled in place). The plugin name and description in the plugin list follow the language too (`locale/en.json` → Window Drag, `locale/zh.json` → 窗口拖动).
 

@@ -19,6 +19,10 @@ import test from 'node:test'
 
 const SOURCE = readFileSync(new URL('../lib/client.js', import.meta.url), 'utf8')
 const BAND_ID = 'dsh-window-drag-probe-band'
+const PANEL_ID = 'dsh-window-drag-probe-panel'
+
+/** How many elements currently carry the panel id — more than one means stacked panels. */
+const countPanels = (document) => document.querySelectorAll(`#${PANEL_ID}`).length
 
 /** Minimal element standing in for the DOM nodes the plugin touches. */
 class FakeElement {
@@ -103,7 +107,19 @@ function createDocument() {
       return walk(root)
     },
     querySelector: () => null,
-    querySelectorAll: () => [],
+    querySelectorAll(selector) {
+      if (typeof selector !== 'string' || !selector.startsWith('#')) return []
+      const id = selector.slice(1)
+      const found = []
+      const walk = (node) => {
+        for (const child of node.children) {
+          if (child.id === id) found.push(child)
+          walk(child)
+        }
+      }
+      walk(this.body ?? this.documentElement)
+      return found
+    },
   }
   doc.documentElement.dataset = {}
   doc.body = new FakeElement('body')
@@ -112,7 +128,8 @@ function createDocument() {
 }
 
 /** Load lib/client.js against a fake window/document and return its exports. */
-function loadPlugin(document) {  const observers = []
+function loadPlugin(document, requireImpl = (name) => { throw new Error(`unexpected require: ${name}`) }) {
+  const observers = []
   const timers = []
   let entry = null
   const window = {
@@ -148,7 +165,7 @@ function loadPlugin(document) {  const observers = []
   run(...Object.values(context))
   assert.notEqual(entry, null, 'client.js must register itself through window.__ModuleLoader__.load')
   assert.equal(entry.id, 'dsh-window-drag-probe')
-  const exports = entry.factory((name) => { throw new Error(`unexpected require: ${name}`) })
+  const exports = entry.factory(requireImpl)
   return { exports, window, observers, timers }
 }
 
@@ -358,4 +375,79 @@ test('falls back to Chinese when the shell has no locale service', () => {
   const body = panel.children[1]
   assert.match(body.textContent, /窗口位置/u)
   assert.notEqual(document.getElementById(BAND_ID), null)
+})
+
+test('opening the panel again reuses the open one instead of stacking a copy', () => {
+  const document = createDocument()
+  const { exports } = loadPlugin(document)
+  exports.apply(makeContext())
+  const handle = globalThis.__dshWindowDragProbe
+
+  handle.open()
+  assert.equal(countPanels(document), 1)
+  handle.open()
+  handle.open()
+  assert.equal(countPanels(document), 1, 'the panel id must guard the panel')
+
+  handle.close()
+  assert.equal(countPanels(document), 0)
+})
+
+test('opening collapses panels left behind by an older revision, and closing clears them all', () => {
+  const document = createDocument()
+  const { exports } = loadPlugin(document)
+  exports.apply(makeContext())
+  const handle = globalThis.__dshWindowDragProbe
+
+  // The shape the previous revision produced: one panel per press, all in the same corner.
+  for (let index = 0; index < 3; index += 1) {
+    const leftover = document.createElement('div')
+    leftover.id = PANEL_ID
+    document.body.append(leftover)
+  }
+  assert.equal(countPanels(document), 3)
+
+  handle.open()
+  assert.equal(countPanels(document), 1, 'the first press must collapse the stack')
+
+  handle.close()
+  assert.equal(countPanels(document), 0)
+})
+
+test('the opener renders only on this plugin’s own detail page', () => {
+  const document = createDocument()
+  const registered = []
+  const slots = {
+    inject: (key, callback) => { registered.push(callback()) },
+    register: (options, component) => { registered.push({ options, component }); return () => {} },
+  }
+  const requireImpl = (name) => {
+    if (name === 'react') return { createElement: (type, props, children) => ({ type, props, children }) }
+    throw new Error(`unexpected require: ${name}`)
+  }
+  const { exports } = loadPlugin(document, requireImpl)
+  exports.apply(makeContext({ get: (key) => (key === 'slots' ? slots : undefined) }))
+  const opener = registered.find((entry) => entry.options !== undefined && entry.options.id === 'window-drag-probe').component
+  assert.equal(typeof opener, 'function')
+
+  const ours = [
+    { kind: 'bundle', pkg: { name: 'dsh-window-drag-probe', rows: [] } },
+    { kind: 'row', pkg: { name: 'dsh-window-drag-probe', rows: [] }, row: { rowId: 'window-drag-probe' } },
+    { kind: 'item', id: 'window-drag-probe' },
+  ]
+  for (const subject of ours) {
+    assert.notEqual(opener({ subject }), null, `expected a button for ${JSON.stringify(subject)}`)
+  }
+
+  const theirs = [
+    { kind: 'bundle', pkg: { name: '@deepseek-ai/dsh-experimental-auto-review', rows: [{ rowId: 'auto-review' }] } },
+    { kind: 'row', pkg: { name: 'other-bundle', rows: [] }, row: { rowId: 'auto-review' } },
+    { kind: 'item', id: 'auto-review' },
+    {},
+    undefined,
+  ]
+  for (const subject of theirs) {
+    assert.equal(opener({ subject }), null, `expected nothing for ${JSON.stringify(subject)}`)
+  }
+  assert.equal(opener({}), null)
 })
