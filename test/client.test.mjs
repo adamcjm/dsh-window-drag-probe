@@ -201,6 +201,7 @@ test('loads a drag band without any panel, button or service', () => {
   assert.match(band.style.cssText, /position:fixed/u)
   assert.match(band.style.cssText, /top:0/u)
   assert.match(band.style.cssText, /height:16px/u)
+  assert.match(band.style.cssText, /background:transparent/u, 'the strip must not tint the window chrome')
 })
 
 test('keeps the band as the last body child so no-drag boxes cannot subtract it', () => {

@@ -82,9 +82,9 @@ A local directory install is linked, not copied, so edits take effect on the nex
 
 ### Drag band
 
-After the host restarts, a faint blue band spans the **top 16 px** of the window. Press anywhere inside it and drag: the window moves.
+After the host restarts, the **top 16 px** of the window is the drag strip: fully transparent at rest, so the window shows through and nothing gets tinted. Press anywhere inside it and drag: the window moves.
 
-- The band is deliberately visible — a draggable region swallows pointer events, so no hover cue is possible, and an invisible band is unusable.
+- Invisible at rest; a faint blue cue appears only while the pointer is over those 16 px (a draggable region swallows pointer events, so no other affordance is available).
 - Everything below the band behaves normally; the band does not intercept clicks outside its 16 px.
 - Only one band exists per window; re-arming is idempotent.
 

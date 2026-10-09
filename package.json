@@ -1,6 +1,6 @@
 {
   "name": "dsh-window-drag-probe",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "description": "窗口拖动：窗口一加载就在顶部自动装好一条可拖拽带（本机 macOS 拖不动窗口的解法），并从插件页提供按钮打开面板读取 computed app-region、recall 标记与窗口位移（deepseek-harness discussion #9112）。",
   "license": "MIT",
