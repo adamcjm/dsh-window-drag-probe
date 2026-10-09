@@ -21,6 +21,16 @@ macOS 上的 DSH Desktop 是 `hiddenInset` 窗口，**没有原生标题栏**，
 
 ---
 
+## 环境要求
+
+已在 **DSH Desktop 0.2.0-rc.2 / Electron 44.0.0** 上验证，见[验证环境](#验证环境)。
+
+DSH 的客户端 API **不跨宿主版本向前兼容**：用错版本构建的客户端半体不会优雅降级，而是直接把视图打崩（典型症状是 `TypeError: useConversation is not a function`）。`0.7.1` 是本插件第一次发布，没有更早的版本线可退回 —— 如果你的宿主与上面的验证环境不同，请先 `dsh --version` 确认，并把版本号附在 issue 里再决定是否安装。
+
+插件不声明任何硬性服务依赖（`inject: []`）：`slots` 与 `locale` 都是可选查找，任一缺失就退化为原生 DOM 浮层 + 中文文案，因此不会卡住外壳等服务。
+
+---
+
 ## 安装
 
 ### 方式 A：从插件页安装（DSH Desktop 推荐）
@@ -37,10 +47,22 @@ DSH Desktop 的 profile 由应用独占管理，命令行会被拒绝，所以�
 3. 安装，然后选择 **立即启用**（Enable now）
 4. **用 ⌘Q 完全退出 DSH Desktop 再重新打开** —— 客户端 bundle 只在宿主 boot 时组装一次，关窗口不算重启
 
-### 方式 B：命令行（由命令行管理的 profile）
+### 方式 B：命令行 —— 从 npm 安装（由命令行管理的 profile）
 
 ```sh
-dsh plugin --profile <profile> add https://github.com/adamcjm/dsh-window-drag-probe
+dsh plugin --profile <profile> add dsh-window-drag-probe
+```
+
+需要可复现时锁定具体版本：
+
+```sh
+dsh plugin --profile <profile> add dsh-window-drag-probe@0.7.1
+```
+
+GitHub 线路解析的是默认分支 HEAD，而不是已发布的版本：
+
+```sh
+dsh plugin --profile <profile> add github:adamcjm/dsh-window-drag-probe
 ```
 
 然后重启该宿主。

@@ -1,10 +1,29 @@
 {
   "name": "dsh-window-drag-probe",
   "version": "0.7.1",
-  "private": true,
   "type": "module",
   "description": "窗口拖动：窗口一加载就在顶部自动装好一条可拖拽带（本机 macOS 拖不动窗口的解法），并从插件页提供按钮打开面板读取 computed app-region、recall 标记与窗口位移（deepseek-harness discussion #9112）。",
   "license": "MIT",
+  "author": "adamcjm <adamcjm@163.com>",
+  "homepage": "https://github.com/adamcjm/dsh-window-drag-probe#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamcjm/dsh-window-drag-probe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adamcjm/dsh-window-drag-probe/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "dsh-plugin",
+    "electron",
+    "macos",
+    "window-drag",
+    "app-region",
+    "diagnostics"
+  ],
   "icon": "./icon.svg",
   "main": "lib/index.js",
   "exports": {
@@ -25,6 +44,9 @@
     "LICENSE",
     "package.json"
   ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
   "dsh": {
     "manifestVersion": 1,
     "bundle": {

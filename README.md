@@ -21,6 +21,16 @@ The plugin does **not** patch any official file. It adds:
 
 ---
 
+## Requirements
+
+Verified against **DSH Desktop 0.2.0-rc.2 / Electron 44.0.0** — see [Verified on](#verified-on).
+
+The DSH client API is **not forward-compatible across host releases**: a client half built for a different API does not degrade gracefully, it crashes the view (the typical symptom is `TypeError: useConversation is not a function`). `0.7.1` is the first published release, so there is no older line to fall back to — if your host differs from the verified build above, check `dsh --version` first and open an issue with it before installing.
+
+The plugin declares no hard service dependency (`inject: []`): it looks `slots` and `locale` up optionally and falls back to a plain DOM overlay with Chinese copy when either is missing, so it can never park the shell waiting for a service.
+
+---
+
 ## Install
 
 ### A. From the plugin page (recommended on DSH Desktop)
@@ -37,10 +47,22 @@ DSH Desktop manages its own profile exclusively, so the CLI refuses it — insta
 3. Install, then choose **Enable now**
 4. **Quit DSH Desktop completely (⌘Q) and reopen it** — the client bundle is assembled once at host boot, so a window close is not enough
 
-### B. CLI (profiles managed from the command line)
+### B. CLI — from npm (profiles managed from the command line)
 
 ```sh
-dsh plugin --profile <profile> add https://github.com/adamcjm/dsh-window-drag-probe
+dsh plugin --profile <profile> add dsh-window-drag-probe
+```
+
+Pin the exact release when you need reproducibility:
+
+```sh
+dsh plugin --profile <profile> add dsh-window-drag-probe@0.7.1
+```
+
+The GitHub track resolves the default-branch HEAD instead of a published version:
+
+```sh
+dsh plugin --profile <profile> add github:adamcjm/dsh-window-drag-probe
 ```
 
 Then restart that host.

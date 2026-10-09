@@ -2,7 +2,7 @@
 #
 # Mounts the probe row when this package is installed through the official CLI:
 #
-#   dsh plugin --profile desktop add /path/to/dsh-window-drag-probe
+#   dsh plugin --profile desktop add dsh-window-drag-probe
 #
 # The probe is browser-only: the host half is an empty plugin, all work happens
 # in lib/client.js inside the window where the drag region is supposed to live.
